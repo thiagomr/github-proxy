@@ -2,8 +2,9 @@ require('dotenv').config();
 
 const request = require('supertest');
 const Server = require('../src/app/server');
+const { fakeProxy } = require('../mocks/proxy');
 
-const server = new Server();
+const server = new Server(fakeProxy);
 
 describe('healthcheck', () => {
     it('should return 200', async () => {

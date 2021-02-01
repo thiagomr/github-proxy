@@ -7,9 +7,10 @@ const router = require('./router');
 const logger = require('../lib/logger');
 
 class Server {
-    constructor() {
+    constructor(proxy) {
         this.app = express();
         this.port = process.env.PORT || 8000;
+        this.proxy = proxy;
 
         this.setupMiddlewares();
         this.setupRoutes();
@@ -27,12 +28,13 @@ class Server {
 
     setupMiddlewares() {
         this.app.use(express.json());
+        this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
         this.app.use(morgan(this.formatRequestLog));
     }
 
     setupRoutes() {
         this.app.use('/', router);
-        this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+        this.app.use('/api', this.proxy);
     }
 
     listen() {
